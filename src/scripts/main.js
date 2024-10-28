@@ -17,16 +17,24 @@ function showNotification(message, isError = false) {
 
 // First Promise
 const firstPromise = new Promise((resolve, reject) => {
+  let isHandled = false; // Flag to ensure only one handler is executed
+
   const clickHandler = () => {
-    resolve('First promise was resolved');
-    document.removeEventListener('click', clickHandler);
+    if (!isHandled) {
+      isHandled = true;
+      resolve('First promise was resolved');
+      document.removeEventListener('click', clickHandler);
+    }
   };
 
   document.addEventListener('click', clickHandler);
 
   setTimeout(() => {
-    reject(new Error('First promise was rejected'));
-    document.removeEventListener('click', clickHandler);
+    if (!isHandled) {
+      isHandled = true;
+      reject(new Error('First promise was rejected'));
+      document.removeEventListener('click', clickHandler);
+    }
   }, 3000);
 });
 
